@@ -7,9 +7,10 @@ import { Header } from '@/components/layout/Header';
 import { BottomNav } from '@/components/layout/BottomNav';
 import {
   ArrowLeft, Copy, Key, Shield, LogOut, ChevronRight,
-  CheckCircle2, Fingerprint, ExternalLink, Wallet,
+  CheckCircle2, ExternalLink, Wallet,
 } from 'lucide-react';
 import Link from 'next/link';
+import { getActiveWalletAddress } from '@/lib/wallet';
 
 interface SettingRowProps {
   icon: React.ReactNode;
@@ -93,10 +94,8 @@ export default function SettingsPage() {
   const [exportLoading, setExportLoading] = useState(false);
 
   const embeddedWallet = wallets.find(w => w.walletClientType === 'privy');
-  const address = embeddedWallet?.address ?? '';
+  const address = getActiveWalletAddress(wallets) ?? '';
 
-  // Check if user has a passkey linked
-  const hasPasskey = user?.linkedAccounts?.some(a => a.type === 'passkey');
   const loginEmail = user?.linkedAccounts?.find(a => a.type === 'email')?.address
     ?? user?.linkedAccounts?.find(a => a.type === 'google_oauth')?.email
     ?? '';
@@ -156,7 +155,7 @@ export default function SettingsPage() {
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text-primary)' }}>
-                Embedded Wallet
+                Active Wallet
               </div>
               {loginEmail && (
                 <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: 2 }}>
@@ -231,7 +230,7 @@ export default function SettingsPage() {
         </div>
         <div className="card animate-fade-in-up" style={{ overflow: 'hidden', padding: 0, marginBottom: 16 }}>
 
-          {/* Passkey status */}
+          {/* Web3 login status */}
           <div style={{
             display: 'flex', alignItems: 'center', gap: 14,
             padding: '15px 16px',
@@ -239,31 +238,31 @@ export default function SettingsPage() {
           }}>
             <div style={{
               width: 38, height: 38, borderRadius: 11,
-              background: hasPasskey ? 'rgba(255,255,255,0.08)' : 'var(--bg-elevated)',
-              border: `1.5px solid ${hasPasskey ? 'rgba(255,255,255,0.2)' : 'var(--border)'}`,
+              background: embeddedWallet ? 'rgba(255,255,255,0.08)' : 'var(--bg-elevated)',
+              border: `1.5px solid ${address ? 'rgba(255,255,255,0.2)' : 'var(--border)'}`,
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: hasPasskey ? '#ffffff' : 'var(--text-secondary)',
+              color: address ? '#ffffff' : 'var(--text-secondary)',
               flexShrink: 0,
             }}>
-              <Fingerprint size={17} />
+              <Wallet size={17} />
             </div>
             <div style={{ flex: 1 }}>
               <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
-                Passkey / Biometric
+                Web3 Wallet Login
                 <span style={{
                   fontSize: '0.62rem', fontWeight: 700, padding: '2px 7px',
-                  background: hasPasskey ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)',
-                  color: hasPasskey ? '#ffffff' : 'var(--text-muted)',
-                  border: `1px solid ${hasPasskey ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)'}`,
+                  background: address ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.05)',
+                  color: address ? '#ffffff' : 'var(--text-muted)',
+                  border: `1px solid ${address ? 'rgba(255,255,255,0.3)' : 'rgba(255,255,255,0.1)'}`,
                   borderRadius: 99, letterSpacing: '0.04em', textTransform: 'uppercase',
                 }}>
-                  {hasPasskey ? 'Active' : 'Not set'}
+                  {address ? 'Active' : 'Not set'}
                 </span>
               </div>
               <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: 2 }}>
-                {hasPasskey
-                  ? 'Transactions confirmed with fingerprint/Face ID'
-                  : 'Fingerprint transaction confirmation - set via Privy popup'}
+                {address
+                  ? 'Sign in and transactions are handled via your Privy wallet session'
+                  : 'Connect a wallet to activate Web3 login'}
               </div>
             </div>
           </div>
@@ -280,10 +279,8 @@ export default function SettingsPage() {
           <SettingRow
             icon={<Shield size={16} />}
             label="Manage Linked Accounts"
-            description="Email, Google, passkey — add or remove login methods"
-            onClick={() => {
-              window.open('https://privy.io', '_blank');
-            }}
+            description="Manage linked login methods from your ReTempo account page"
+            onClick={() => router.push('/settings/linked-accounts')}
           />
         </div>
 

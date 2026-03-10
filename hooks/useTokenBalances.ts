@@ -4,6 +4,7 @@ import { useReadContracts } from 'wagmi';
 import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { formatUnits } from 'viem';
 import { SUPPORTED_TOKENS, ERC20_ABI, tempoChain } from '@/lib/config';
+import { getActiveWalletAddress } from '@/lib/wallet';
 
 export interface TokenBalance {
   symbol: string;
@@ -21,8 +22,7 @@ export function useTokenBalances() {
   const { authenticated } = usePrivy();
   const { wallets } = useWallets();
 
-  const embeddedWallet = wallets.find(w => w.walletClientType === 'privy');
-  const address = embeddedWallet?.address as `0x${string}` | undefined;
+  const address = getActiveWalletAddress(wallets);
 
   const contracts = SUPPORTED_TOKENS.map(token => ({
     address: token.address,

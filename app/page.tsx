@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { usePrivy } from '@privy-io/react-auth';
-import { Zap, Shield, Zap as ZapIcon } from 'lucide-react';
+import { Zap, Wallet } from 'lucide-react';
 
 export default function LoginPage() {
   const { ready, authenticated, login } = usePrivy();
@@ -145,25 +145,14 @@ export default function LoginPage() {
             Continue with Email / Google
           </button>
 
-          <div style={{
-            marginTop: 16,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 10,
-          }}>
-            <div className="divider" style={{ flex: 1 }} />
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>or use passkey</span>
-            <div className="divider" style={{ flex: 1 }} />
-          </div>
-
           <button
-            id="passkey-login-btn"
+            id="web3-login-btn"
             className="btn btn-ghost"
-            onClick={login}
+            onClick={() => login({ loginMethods: ['wallet'] })}
             style={{ width: '100%', marginTop: 16, padding: '14px' }}
           >
-            <Shield size={16} />
-            Sign in with Passkey
+            <Wallet size={16} />
+            Connect Wallet (Web3)
           </button>
         </div>
 

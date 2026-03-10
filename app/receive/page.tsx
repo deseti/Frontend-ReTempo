@@ -10,6 +10,7 @@ import { BottomNav } from '@/components/layout/BottomNav';
 import { AddressDisplay } from '@/components/ui/AddressDisplay';
 import { ArrowLeft, Download } from 'lucide-react';
 import Link from 'next/link';
+import { getActiveWalletAddress } from '@/lib/wallet';
 
 // Load QR dynamically to avoid SSR issues
 const QRCode = dynamic(() => import('qrcode.react').then(m => m.QRCodeSVG), { ssr: false });
@@ -19,8 +20,7 @@ export default function ReceivePage() {
   const { wallets } = useWallets();
   const router = useRouter();
 
-  const embeddedWallet = wallets.find(w => w.walletClientType === 'privy');
-  const address = embeddedWallet?.address ?? '';
+  const address = getActiveWalletAddress(wallets) ?? '';
 
   useEffect(() => {
     if (ready && !authenticated) router.replace('/');

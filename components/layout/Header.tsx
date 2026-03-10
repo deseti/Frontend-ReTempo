@@ -4,12 +4,12 @@ import { usePrivy, useWallets } from '@privy-io/react-auth';
 import { AddressDisplay } from '@/components/ui/AddressDisplay';
 import { Settings } from 'lucide-react';
 import Link from 'next/link';
+import { getActiveWalletAddress } from '@/lib/wallet';
 
 export function Header() {
   const { authenticated } = usePrivy();
   const { wallets } = useWallets();
-  const embeddedWallet = wallets.find(w => w.walletClientType === 'privy');
-  const address = embeddedWallet?.address;
+  const address = getActiveWalletAddress(wallets);
 
   return (
     <header style={{

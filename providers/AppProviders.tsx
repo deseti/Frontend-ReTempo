@@ -20,7 +20,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
           accentColor: '#10b981',
           logo: '/logo.png',
         },
-        loginMethods: ['email', 'google', 'passkey'],
+        loginMethods: ['wallet', 'email', 'google'],
         embeddedWallets: {
           ethereum: {
             createOnLogin: 'users-without-wallets',

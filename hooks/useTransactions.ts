@@ -3,9 +3,9 @@
 import { useWallets } from '@privy-io/react-auth';
 import { usePublicClient } from 'wagmi';
 import { useEffect, useState, useCallback } from 'react';
-import { ROUTER_ABI } from '@/lib/contracts';
 import { ROUTER_ADDRESS, SUPPORTED_TOKENS, tempoChain } from '@/lib/config';
 import { formatUnits } from 'viem';
+import { getActiveWalletAddress } from '@/lib/wallet';
 
 export type TxType = 'swap' | 'send' | 'receive' | 'invoice_paid' | 'invoice_created';
 
@@ -40,8 +40,7 @@ export function useTransactions() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const embeddedWallet = wallets.find(w => w.walletClientType === 'privy');
-  const address = embeddedWallet?.address as `0x${string}` | undefined;
+  const address = getActiveWalletAddress(wallets);
 
   const fetchTxs = useCallback(async () => {
     if (!address || !publicClient || ROUTER_ADDRESS === '0x0000000000000000000000000000000000000000') {
@@ -119,7 +118,12 @@ export function useTransactions() {
       }).catch(() => []);
 
       const swapTxs: Transaction[] = swapLogs.map(log => {
-        const args = log.args as any;
+        const args = log.args as {
+          tokenIn?: `0x${string}`;
+          tokenOut?: `0x${string}`;
+          amountIn?: bigint;
+          amountOut?: bigint;
+        };
         const tInAddr = args.tokenIn?.toLowerCase() ?? '';
         const tOutAddr = args.tokenOut?.toLowerCase() ?? '';
         const tokenInDecimals = SUPPORTED_TOKENS.find(t => t.address.toLowerCase() === tInAddr)?.decimals ?? 6;
@@ -137,7 +141,10 @@ export function useTransactions() {
       });
 
       const paidTxs: Transaction[] = paidLogs.map(log => {
-        const args = log.args as any;
+        const args = log.args as {
+          paymentToken?: `0x${string}`;
+          amountPaid?: bigint;
+        };
         const tAddr = args.paymentToken?.toLowerCase() ?? '';
         const tDecimals = SUPPORTED_TOKENS.find(t => t.address.toLowerCase() === tAddr)?.decimals ?? 6;
         return {
@@ -153,7 +160,10 @@ export function useTransactions() {
       const sendTxs: Transaction[] = sendLogs.map(log => {
         const tAddress = log.address.toLowerCase();
         const token = SUPPORTED_TOKENS.find(t => t.address.toLowerCase() === tAddress);
-        const args = log.args as any;
+        const args = log.args as {
+          to?: `0x${string}`;
+          value?: bigint;
+        };
         return {
           id: `send-${log.transactionHash}-${log.logIndex}`,
           type: 'send',
@@ -168,7 +178,10 @@ export function useTransactions() {
       const receiveTxs: Transaction[] = receiveLogs.map(log => {
         const tAddress = log.address.toLowerCase();
         const token = SUPPORTED_TOKENS.find(t => t.address.toLowerCase() === tAddress);
-        const args = log.args as any;
+        const args = log.args as {
+          from?: `0x${string}`;
+          value?: bigint;
+        };
         return {
           id: `receive-${log.transactionHash}-${log.logIndex}`,
           type: 'receive',

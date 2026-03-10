@@ -41,7 +41,7 @@ export function BalanceCard() {
       ) : (
         <div className="animate-fade-in" style={{
           fontFamily: 'var(--font-display)',
-          fontSize: '2.8rem',
+          fontSize: '2.2rem',
           fontWeight: 700,
           color: 'var(--text-primary)',
           letterSpacing: '-0.03em',
@@ -50,7 +50,7 @@ export function BalanceCard() {
           textShadow: '0 0 20px rgba(255,255,255,0.3)',
         }}>
           {hubBalance?.balance ?? '0.0000'}
-          <span style={{ fontSize: '1rem', color: 'var(--accent)', marginLeft: 8, textShadow: 'none' }}>
+          <span style={{ fontSize: '0.88rem', color: 'var(--accent)', marginLeft: 8, textShadow: 'none' }}>
             {hubBalance?.symbol}
           </span>
         </div>

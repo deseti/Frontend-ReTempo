@@ -4,10 +4,11 @@ import Link from 'next/link';
 import { Send, QrCode, ArrowLeftRight, History, Droplets, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { useWallets } from '@privy-io/react-auth';
 import { useFaucet } from '@/hooks/useFaucet';
+import { getActiveWalletAddress } from '@/lib/wallet';
 
 export function QuickActions() {
   const { wallets } = useWallets();
-  const address = wallets.find(w => w.walletClientType === 'privy')?.address as `0x${string}` | undefined;
+  const address = getActiveWalletAddress(wallets);
 
   const { requestTokens, status: faucetState, error: faucetErr, reset: resetFaucet } = useFaucet();
 
