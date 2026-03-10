@@ -18,7 +18,7 @@ export function AppProviders({ children }: { children: React.ReactNode }) {
         appearance: {
           theme: 'dark',
           accentColor: '#10b981',
-          logo: '/logo.png',
+          logo: '/retempo.svg',
         },
         loginMethods: ['wallet', 'email', 'google'],
         embeddedWallets: {
