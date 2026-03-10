@@ -160,24 +160,33 @@ export const ROUTER_ABI = [
 // ─── ReTempoPool ABI ──────────────────────────────────────────────────────────
 export const POOL_ABI = [
   {
-    name: 'swap',
+    name: 'addLiquidity',
     type: 'function',
     stateMutability: 'nonpayable',
     inputs: [
-      { name: 'tokenIn',  type: 'address' },
-      { name: 'amountIn', type: 'uint256' },
+      { name: 'amountA', type: 'uint256' },
+      { name: 'amountB', type: 'uint256' },
     ],
-    outputs: [{ name: 'amountOut', type: 'uint256' }],
+    outputs: [{ name: 'shares', type: 'uint256' }],
   },
   {
-    name: 'getAmountOut',
+    name: 'removeLiquidity',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'shares', type: 'uint256' },
+    ],
+    outputs: [
+      { name: 'amountA', type: 'uint256' },
+      { name: 'amountB', type: 'uint256' },
+    ],
+  },
+  {
+    name: 'liquidity',
     type: 'function',
     stateMutability: 'view',
-    inputs: [
-      { name: 'amountIn', type: 'uint256' },
-      { name: 'tokenIn',  type: 'address' },
-    ],
-    outputs: [{ name: 'amountOut', type: 'uint256' }],
+    inputs: [{ name: 'account', type: 'address' }],
+    outputs: [{ name: 'shares', type: 'uint256' }],
   },
   {
     name: 'getReserves',
@@ -188,13 +197,6 @@ export const POOL_ABI = [
       { name: 'reserveA', type: 'uint256' },
       { name: 'reserveB', type: 'uint256' },
     ],
-  },
-  {
-    name: 'getPrice',
-    type: 'function',
-    stateMutability: 'view',
-    inputs: [],
-    outputs: [{ name: 'price', type: 'uint256' }],
   },
   {
     name: 'tokenA',
@@ -209,5 +211,32 @@ export const POOL_ABI = [
     stateMutability: 'view',
     inputs: [],
     outputs: [{ name: '', type: 'address' }],
+  },
+  {
+    name: 'totalSupply',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+  {
+    name: 'LiquidityAdded',
+    type: 'event',
+    inputs: [
+      { name: 'provider', type: 'address', indexed: true },
+      { name: 'amountA', type: 'uint256', indexed: false },
+      { name: 'amountB', type: 'uint256', indexed: false },
+      { name: 'shares', type: 'uint256', indexed: false },
+    ],
+  },
+  {
+    name: 'LiquidityRemoved',
+    type: 'event',
+    inputs: [
+      { name: 'provider', type: 'address', indexed: true },
+      { name: 'sharesburned', type: 'uint256', indexed: false },
+      { name: 'amountA', type: 'uint256', indexed: false },
+      { name: 'amountB', type: 'uint256', indexed: false },
+    ],
   },
 ] as const;
