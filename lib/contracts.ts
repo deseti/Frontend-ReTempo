@@ -8,12 +8,12 @@ export const ROUTER_ABI = [
     type: 'function',
     stateMutability: 'nonpayable',
     inputs: [
-      { name: 'tokenIn',      type: 'address' },
-      { name: 'tokenOut',     type: 'address' },
-      { name: 'amountIn',     type: 'uint256' },
-      { name: 'minAmountOut', type: 'uint256' },
+      { name: 'tokenIn',  type: 'address' },
+      { name: 'tokenOut', type: 'address' },
+      { name: 'amountIn', type: 'uint256' },
+      // minAmountOut REMOVED — kontrak on-chain hanya terima 3 params
     ],
-    outputs: [{ name: 'amountOut', type: 'uint256' }],
+    outputs: [],
   },
 
   // ── createInvoice ──────────────────────────────────────────────────────────

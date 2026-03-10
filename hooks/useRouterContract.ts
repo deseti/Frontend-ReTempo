@@ -11,14 +11,13 @@ export function useRouteSwap() {
   const { isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({ hash });
 
   async function routeSwap(
-    tokenIn:      `0x${string}`,
-    tokenOut:     `0x${string}`,
-    amountIn:     string,
-    decimals:     number = 6,
-    slippageBps:  bigint = BigInt(50)  // default 0.5%
+    tokenIn:  `0x${string}`,
+    tokenOut: `0x${string}`,
+    amountIn: string,
+    decimals: number = 6,
+    // slippageBps REMOVED — kontrak on-chain tidak support minAmountOut
   ) {
     const amount = parseUnits(amountIn, decimals);
-    const minAmountOut = (amount * (BigInt(10000) - slippageBps)) / BigInt(10000);
 
     // Step 1: approve router to spend tokenIn
     await writeContractAsync({
@@ -28,12 +27,12 @@ export function useRouteSwap() {
       args: [ROUTER_ADDRESS, amount],
     });
 
-    // Step 2: call routeSwap with minAmountOut slippage protection
+    // Step 2: call routeSwap — 3 params only (tokenIn, tokenOut, amountIn)
     const txHash = await writeContractAsync({
       address: ROUTER_ADDRESS,
       abi: ROUTER_ABI,
       functionName: 'routeSwap',
-      args: [tokenIn, tokenOut, amount, minAmountOut],
+      args: [tokenIn, tokenOut, amount],
     });
 
     return txHash;
@@ -60,7 +59,7 @@ export function usePayInvoice() {
       args: [ROUTER_ADDRESS, approvalAmount],
     });
 
-    // Step 2: pay (await fixed — was missing before)
+    // Step 2: pay
     const txHash = await writeContractAsync({
       address: ROUTER_ADDRESS,
       abi: ROUTER_ABI,

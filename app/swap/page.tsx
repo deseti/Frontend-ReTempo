@@ -48,9 +48,6 @@ export default function SwapPage() {
     setErrMsg('');
     try {
       const amountBn = parseUnits(amount, tIn.decimals);
-      // Slippage protection: tolerate up to 0.5% slippage on output
-      const SLIPPAGE_BPS = BigInt(50); // 0.5% = 50 basis points
-      const minAmountOut = (amountBn * (BigInt(10000) - SLIPPAGE_BPS)) / BigInt(10000);
 
       setStep('approving');
       const approveHash = await writeContractAsync({
@@ -69,13 +66,12 @@ export default function SwapPage() {
         address: ROUTER_ADDRESS,
         abi: ROUTER_ABI,
         functionName: 'routeSwap',
-        args: [tIn.address, tOut.address, amountBn, minAmountOut],
+        args: [tIn.address, tOut.address, amountBn], // ← 3 params only, minAmountOut removed
       });
       setTxHash(hash);
       setStep('success');
     } catch (e: unknown) {
       const raw = e instanceof Error ? e.message : String(e);
-      // Simplify common revert messages for user-friendliness
       const msg = raw.includes('user rejected') ? 'Transaction rejected by user.'
         : raw.includes('insufficient') ? 'Insufficient balance or allowance.'
         : raw.includes('slippage') || raw.includes('INSUFFICIENT_OUTPUT') ? 'Slippage too high — try a smaller amount.'
